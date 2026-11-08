@@ -1303,8 +1303,16 @@
     "replaceShareDialogConfirm": "جایگزینی"
   },
   "networkPage": {
-    "description": "به یک سرور راه دور وصل شوید و فایل‌هایش را مثل یک پوشه‌ی محلی باز کنید.",
+    "description": "سرورهای راه دور را ذخیره کنید و با یک کلیک mount کنید. سرور mount شده مثل یک پوشه‌ی محلی باز می‌شود.",
     "protocolsHint": "پروتکل‌های پشتیبانی‌شده: SSHFS (SSH)، NFS و SMB / CIFS. این قابلیت در مرحله‌ی آلفا است.",
-    "connectButton": "اتصال به سرور"
-  }
+    "connectButton": "افزودن سرور",
+    "savedServers": "سرورهای ذخیره‌شده",
+    "emptyServers": "هنوز سروری ذخیره نشده است. یک سرور اضافه کنید تا اینجا نمایش داده شود.",
+    "passwordNote": "رمز عبور هرگز ذخیره نمی‌شود. برای اتصال با یک کلیک از کلید SSH استفاده کنید.",
+    "connecting": "در حال اتصال...",
+    "removeServer": "حذف سرور",
+    "mountedAt": "mount شده در {path}"
+  },
+  "networkMountPath": "مسیر mount (اختیاری)",
+  "networkSaveServer": "ذخیره‌ی این سرور برای mount با یک کلیک (رمز عبور ذخیره نمی‌شود)"
 }

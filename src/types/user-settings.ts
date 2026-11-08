@@ -229,6 +229,7 @@ export type UserSettings = {
   launchAtStartupHidden: boolean;
   startupPage: StartupPage;
   lastRoute: LastRoute;
+  networkServers: NetworkServer[];
   performance: PerformanceSettings;
   appUpdates: AppUpdatesSettings;
   changelog: ChangelogSettings;
@@ -349,6 +350,24 @@ export type RestorableRouteName
 export type LastRoute = {
   name: RestorableRouteName;
   fullPageId: string;
+};
+
+export type NetworkServerProtocol = 'sshfs' | 'nfs' | 'smb';
+
+/**
+ * A remote server saved for one-click mounting.
+ * The password is intentionally never stored.
+ */
+export type NetworkServer = {
+  id: string;
+  protocol: NetworkServerProtocol;
+  host: string;
+  port: number | null;
+  username: string;
+  remotePath: string;
+  mountName: string;
+  /** Folder to mount into. Empty means the default (`~/Remote/<mountName>`). */
+  mountPath: string;
 };
 
 export type DefaultDirectoryKind = 'userHome' | 'locations' | 'custom';

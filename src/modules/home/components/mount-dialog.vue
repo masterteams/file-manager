@@ -16,6 +16,9 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { getDefaultMountPath, useNetworkServers } from '@/modules/network/composables/use-network-servers';
 import toReadableBytes from '@/utils/to-readable-bytes';
 import type { MountableDevice } from '@/types/drive-info';
 
@@ -29,9 +32,11 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:open': [value: boolean];
+  'mounted': [mountPoint: string];
 }>();
 
 const { t } = useI18n();
+const { saveServer } = useNetworkServers();
 
 const activeTab = ref<TabId>('devices');
 const devices = ref<MountableDevice[]>([]);
@@ -45,6 +50,8 @@ const networkUsername = ref('');
 const networkPassword = ref('');
 const networkRemotePath = ref('');
 const networkMountName = ref('');
+const networkMountPath = ref('');
+const shouldSaveServer = ref(true);
 const isConnecting = ref(false);
 const connectionError = ref<string | null>(null);
 
@@ -89,6 +96,10 @@ const remotePathPlaceholder = computed(() => {
 
   return 'share_name';
 });
+
+const mountPathPlaceholder = computed(() =>
+  getDefaultMountPath(networkMountName.value.trim() || t('networkMountNamePlaceholder')),
+);
 
 const canConnect = computed(() =>
   networkHost.value.trim() !== ''
@@ -140,6 +151,8 @@ function resetNetworkForm() {
   networkPassword.value = '';
   networkRemotePath.value = '';
   networkMountName.value = '';
+  networkMountPath.value = '';
+  shouldSaveServer.value = true;
   connectionError.value = null;
 }
 
@@ -179,19 +192,35 @@ async function handleConnectNetwork() {
   connectionError.value = null;
 
   try {
-    await invoke<string>('mount_network_share', {
+    const port = networkPort.value ? Number.parseInt(networkPort.value) : null;
+    const mountPoint = await invoke<string>('mount_network_share', {
       params: {
         protocol: selectedProtocol.value,
         host: networkHost.value.trim(),
-        port: networkPort.value ? Number.parseInt(networkPort.value) : null,
+        port,
         username: networkUsername.value.trim() || null,
         password: networkPassword.value || null,
         remote_path: networkRemotePath.value.trim(),
         mount_name: networkMountName.value.trim(),
+        mount_path: networkMountPath.value.trim() || null,
       },
     });
 
+    if (shouldSaveServer.value) {
+      // The password is deliberately not saved.
+      await saveServer({
+        protocol: selectedProtocol.value,
+        host: networkHost.value.trim(),
+        port: Number.isFinite(port) ? port : null,
+        username: networkUsername.value.trim(),
+        remotePath: networkRemotePath.value.trim(),
+        mountName: networkMountName.value.trim(),
+        mountPath: networkMountPath.value.trim(),
+      });
+    }
+
     resetNetworkForm();
+    emit('mounted', mountPoint);
     emit('update:open', false);
   }
   catch (connectError) {
@@ -418,6 +447,28 @@ function handleOpenChange(isOpen: boolean) {
               >
             </div>
 
+            <div class="mount-dialog__field">
+              <label class="mount-dialog__label">{{ t('networkMountPath') }}</label>
+
+              <input
+                v-model="networkMountPath"
+                type="text"
+                class="mount-dialog__input"
+                :placeholder="mountPathPlaceholder"
+              >
+            </div>
+
+            <div class="mount-dialog__save-row">
+              <Checkbox
+                id="mount-dialog-save-server"
+                :model-value="shouldSaveServer"
+                @update:model-value="shouldSaveServer = $event === true"
+              />
+              <Label for="mount-dialog-save-server">
+                {{ t('networkSaveServer') }}
+              </Label>
+            </div>
+
             <div
               v-if="connectionError"
               class="mount-dialog__error"
@@ -455,6 +506,12 @@ function handleOpenChange(isOpen: boolean) {
 
 .mount-dialog__tabs-list {
   width: 100%;
+}
+
+.mount-dialog__save-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .mount-dialog__body {

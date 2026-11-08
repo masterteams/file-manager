@@ -109,4 +109,8 @@ pub struct NetworkShareParams {
     pub password: Option<String>,
     pub remote_path: String,
     pub mount_name: String,
+    /// Absolute (or `~/`-prefixed) folder to mount into. When empty or missing, a default
+    /// under `$HOME/Remote/<mount_name>` is used on Linux.
+    #[serde(default)]
+    pub mount_path: Option<String>,
 }

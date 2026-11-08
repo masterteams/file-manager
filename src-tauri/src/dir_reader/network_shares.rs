@@ -15,18 +15,14 @@ pub fn mount_network_share(params: NetworkShareParams) -> Result<String, String>
 
     #[cfg(not(windows))]
     {
-        let mount_base = {
-            #[cfg(target_os = "macos")]
-            {
-                "/Volumes"
-            }
-            #[cfg(target_os = "linux")]
-            {
-                "/tmp"
-            }
-        };
+        let mount_point = resolve_mount_point(&params)?;
 
-        let mount_point = format!("{}/{}", mount_base, params.mount_name);
+        // Clicking a saved server twice must not fail: an existing mount is a success.
+        if is_mount_point_active(&mount_point) {
+            return Ok(mount_point);
+        }
+
+        let existed_before = std::path::Path::new(&mount_point).exists();
 
         fs::create_dir_all(&mount_point)
             .map_err(|dir_error| format!("Failed to create mount point: {}", dir_error))?;
@@ -38,11 +34,90 @@ pub fn mount_network_share(params: NetworkShareParams) -> Result<String, String>
             unknown => Err(format!("Unknown protocol: {}", unknown)),
         };
 
-        if result.is_err() {
+        if result.is_err() && !existed_before {
+            // remove_dir only removes an empty directory, so this cannot delete user data.
             let _ = fs::remove_dir(&mount_point);
         }
 
         result.map(|_| mount_point)
+    }
+}
+
+/// Picks the folder to mount into: the user's custom path, else the platform default.
+#[cfg(not(windows))]
+fn resolve_mount_point(params: &NetworkShareParams) -> Result<String, String> {
+    let custom_path = params
+        .mount_path
+        .as_deref()
+        .map(str::trim)
+        .filter(|path| !path.is_empty());
+
+    if let Some(custom_path) = custom_path {
+        if custom_path.contains('\0') {
+            return Err("Mount path contains an invalid character".to_string());
+        }
+
+        let expanded = if custom_path == "~" {
+            home_dir_string()?
+        } else if let Some(rest) = custom_path.strip_prefix("~/") {
+            format!("{}/{}", home_dir_string()?, rest)
+        } else {
+            custom_path.to_string()
+        };
+
+        if !expanded.starts_with('/') {
+            return Err("Mount path must be absolute (or start with ~/)".to_string());
+        }
+
+        return Ok(expanded.trim_end_matches('/').to_string());
+    }
+
+    let mount_name = params.mount_name.trim();
+    if mount_name.is_empty()
+        || mount_name == "."
+        || mount_name == ".."
+        || mount_name.contains('/')
+        || mount_name.contains('\0')
+    {
+        return Err("Mount name must be a single folder name without '/'".to_string());
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+        Ok(format!("/Volumes/{}", mount_name))
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        Ok(format!("{}/Remote/{}", home_dir_string()?, mount_name))
+    }
+}
+
+#[cfg(not(windows))]
+fn home_dir_string() -> Result<String, String> {
+    dirs::home_dir()
+        .map(|path| path.to_string_lossy().trim_end_matches('/').to_string())
+        .ok_or_else(|| "Could not determine the home directory".to_string())
+}
+
+/// True when something is already mounted exactly at `mount_point`.
+#[cfg(not(windows))]
+fn is_mount_point_active(mount_point: &str) -> bool {
+    #[cfg(target_os = "linux")]
+    {
+        // Mount points with spaces appear as `\040` in /proc/self/mounts.
+        let escaped = mount_point.replace(' ', "\\040");
+        std::fs::read_to_string("/proc/self/mounts")
+            .map(|mounts| {
+                mounts
+                    .lines()
+                    .any(|line| line.split_whitespace().nth(1) == Some(escaped.as_str()))
+            })
+            .unwrap_or(false)
+    }
+    #[cfg(not(target_os = "linux"))]
+    {
+        let _ = mount_point;
+        false
     }
 }
 
@@ -230,6 +305,63 @@ fn mount_smb(params: &NetworkShareParams, mount_point: &str) -> Result<(), Strin
         } else {
             let stderr = String::from_utf8_lossy(&output.stderr).to_string();
             Err(format!("SMB mount failed: {}", stderr.trim()))
+        }
+    }
+}
+
+#[cfg(all(test, not(windows)))]
+mod tests {
+    use super::*;
+
+    fn params(mount_name: &str, mount_path: Option<&str>) -> NetworkShareParams {
+        NetworkShareParams {
+            protocol: "sshfs".to_string(),
+            host: "example.test".to_string(),
+            port: None,
+            username: None,
+            password: None,
+            remote_path: "/".to_string(),
+            mount_name: mount_name.to_string(),
+            mount_path: mount_path.map(str::to_string),
+        }
+    }
+
+    #[test]
+    fn custom_absolute_path_is_used_without_trailing_slash() {
+        let resolved = resolve_mount_point(&params("srv", Some("/mnt/custom/"))).unwrap();
+        assert_eq!(resolved, "/mnt/custom");
+    }
+
+    #[test]
+    fn tilde_path_expands_to_home() {
+        let home = home_dir_string().unwrap();
+        let resolved = resolve_mount_point(&params("srv", Some("~/Servers/a"))).unwrap();
+        assert_eq!(resolved, format!("{}/Servers/a", home));
+    }
+
+    #[test]
+    fn relative_custom_path_is_rejected() {
+        assert!(resolve_mount_point(&params("srv", Some("relative/dir"))).is_err());
+    }
+
+    #[test]
+    fn blank_custom_path_falls_back_to_default() {
+        let resolved = resolve_mount_point(&params("srv", Some("   "))).unwrap();
+        assert!(resolved.ends_with("/srv"));
+    }
+
+    #[cfg(not(target_os = "macos"))]
+    #[test]
+    fn default_path_is_home_remote_name() {
+        let home = home_dir_string().unwrap();
+        let resolved = resolve_mount_point(&params("srv", None)).unwrap();
+        assert_eq!(resolved, format!("{}/Remote/srv", home));
+    }
+
+    #[test]
+    fn unsafe_mount_names_are_rejected_for_default_path() {
+        for name in ["", ".", "..", "a/b", "../x"] {
+            assert!(resolve_mount_point(&params(name, None)).is_err(), "{name}");
         }
     }
 }

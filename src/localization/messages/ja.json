@@ -1305,6 +1305,14 @@
   "networkPage": {
     "description": "Connect to a remote server and open its files like a local folder.",
     "protocolsHint": "Supported protocols: SSHFS (SSH), NFS and SMB / CIFS. This feature is in alpha.",
-    "connectButton": "Connect to a server"
-  }
+    "connectButton": "Connect to a server",
+    "savedServers": "Saved servers",
+    "emptyServers": "No saved servers yet. Add one and it will appear here.",
+    "passwordNote": "Passwords are never saved. Use SSH keys for one-click access.",
+    "connecting": "Connecting...",
+    "removeServer": "Remove server",
+    "mountedAt": "Mounted at {path}"
+  },
+  "networkMountPath": "Mount path (optional)",
+  "networkSaveServer": "Save this server for one-click mounting (password is not saved)"
 }

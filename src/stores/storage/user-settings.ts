@@ -225,6 +225,7 @@ export const useUserSettingsStore = defineStore('userSettings', () => {
       name: 'home',
       fullPageId: '',
     },
+    networkServers: [],
     performance: {
       prelaunchQuickViewWindow: true,
       prelaunchPrintViewWindow: false,

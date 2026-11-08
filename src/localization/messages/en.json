@@ -858,9 +858,15 @@
   "rescan": "Rescan",
   "devicesTab": "Devices",
   "networkPage": {
-    "description": "Connect to a remote server and open its files like a local folder.",
+    "description": "Save remote servers and mount them with one click. Mounted servers open like local folders.",
     "protocolsHint": "Supported protocols: SSHFS (SSH), NFS and SMB / CIFS. This feature is in alpha.",
-    "connectButton": "Connect to a server"
+    "connectButton": "Add a server",
+    "savedServers": "Saved servers",
+    "emptyServers": "No saved servers yet. Add one and it will appear here.",
+    "passwordNote": "Passwords are never saved. Use SSH keys for one-click access.",
+    "connecting": "Connecting...",
+    "removeServer": "Remove server",
+    "mountedAt": "Mounted at {path}"
   },
   "networkTab": "Network",
   "networkHost": "Host",
@@ -869,6 +875,8 @@
   "networkPassword": "Password",
   "networkRemotePath": "Remote path",
   "networkMountName": "Mount as",
+  "networkMountPath": "Mount path (optional)",
+  "networkSaveServer": "Save this server for one-click mounting (password is not saved)",
   "networkMountNamePlaceholder": "my_share",
   "connect": "Connect",
   "terminal": {
