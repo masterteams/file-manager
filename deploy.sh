@@ -31,6 +31,9 @@ INSTALL_DIR="$HOME/.local/opt/masterteams-file-manager"
 INSTALLED_BIN="$INSTALL_DIR/sigma-file-manager"
 RELEASE_BIN="$PROJECT/src-tauri/target/release/sigma-file-manager"
 
+AUTOSTART_DIR="$HOME/.config/autostart"
+AUTOSTART_FILE="$AUTOSTART_DIR/masterteams-file-manager.desktop"
+
 log() { printf '[deploy] %s\n' "$*"; }
 die() { printf '[deploy] ERROR: %s\n' "$*" >&2; exit 1; }
 
@@ -134,7 +137,8 @@ cmd_build() {
 
 cmd_start() {
   local mode="${1:-debug}"
-  require_branch
+  # Only debug mode runs the working tree; the installed permanent build does not depend on it.
+  [[ "$mode" == "permanent" ]] || require_branch
   if pid_alive; then
     log "already running in $(current_mode) mode (pid $(cat "$PID_FILE")). Use restart."
     return 0
@@ -203,8 +207,39 @@ cmd_restart() {
   cmd_start "$mode"
 }
 
+cmd_autostart() {
+  local action="${1:-status}"
+  case "$action" in
+    enable)
+      [[ -x "$INSTALLED_BIN" ]] || die "no installed build. Run: ./deploy.sh build"
+      mkdir -p "$AUTOSTART_DIR"
+      cat > "$AUTOSTART_FILE" <<DESKTOP
+[Desktop Entry]
+Type=Application
+Name=MasterTeams File Manager
+Comment=Starts the permanent build of the fork at login
+Exec=$PROJECT/deploy.sh start permanent
+Icon=system-file-manager
+Terminal=false
+X-GNOME-Autostart-enabled=true
+X-GNOME-Autostart-Delay=5
+DESKTOP
+      log "autostart enabled: $AUTOSTART_FILE"
+      ;;
+    disable)
+      rm -f "$AUTOSTART_FILE"
+      log "autostart disabled"
+      ;;
+    status)
+      if [[ -f "$AUTOSTART_FILE" ]]; then log "autostart: enabled ($AUTOSTART_FILE)"; else log "autostart: disabled"; fi
+      ;;
+    *) die "usage: ./deploy.sh autostart enable|disable|status" ;;
+  esac
+}
+
 cmd_status() {
   use_pinned_node
+  cmd_autostart status
   if pid_alive; then
     log "app: RUNNING in $(current_mode) mode (pid $(cat "$PID_FILE"))"
   else
@@ -305,6 +340,8 @@ Usage: ./deploy.sh <command>
   restart [mode]  stop, then start (keeps the current mode unless given)
   status          mode, process, port, installed build, node, branch, ahead/behind, gh account
   build           release build, installed to $INSTALL_DIR (for permanent mode)
+  autostart <enable|disable|status>
+                  start the permanent build automatically at every login
   push            git push of $BRANCH to $REMOTE using the $EXPECTED_GH_USER gh account
   pull            fast-forward $BRANCH from $REMOTE (reinstalls deps if the lockfile changed)
   logs [-f]       show (or follow) the log with Wayland clipboard noise filtered out
@@ -317,6 +354,7 @@ case "${1:-}" in
   restart) shift; cmd_restart "${1:-}" ;;
   status)  cmd_status ;;
   build)   cmd_build ;;
+  autostart) shift; cmd_autostart "${1:-status}" ;;
   push)    cmd_push ;;
   pull)    cmd_pull ;;
   logs)    shift; cmd_logs "${1:-}" ;;

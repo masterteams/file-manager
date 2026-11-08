@@ -84,6 +84,7 @@ The fork is used daily while it is developed. `./deploy.sh` at the repo root man
 | `./deploy.sh restart [mode]` | stop, then start. Keeps the current mode unless one is given. |
 | `./deploy.sh status` | Mode, process, port 1420, installed build time, Node version vs the pin, branch, uncommitted count, ahead/behind `origin`, active `gh` account. |
 | `./deploy.sh build` | `tauri build --no-bundle` (release binary, no AppImage/deb), then installs it atomically. Run it after finishing a feature, then `restart permanent`. |
+| `./deploy.sh autostart enable\|disable\|status` | Manages `~/.config/autostart/masterteams-file-manager.desktop`, which runs `deploy.sh start permanent` at every login (5 s delay). It needs a prior `build`. It starts after a graphical login, so a reboot without auto-login waits at the login screen. |
 | `./deploy.sh push` | Pushes `development` to `origin/development` using `gh` credentials for that one command. Aborts if the active `gh` account isn't `masterteams`. |
 | `./deploy.sh pull` | Fetches and fast-forwards `development` from `origin`. It aborts on a dirty tree and runs `npm ci` if the lockfile changed. |
 | `./deploy.sh logs [-f]` | Shows the app log with the Wayland clipboard warning spam filtered out. |
