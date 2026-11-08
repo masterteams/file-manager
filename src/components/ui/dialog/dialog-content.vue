@@ -73,7 +73,7 @@ const { t } = useI18n();
   border: 1px solid hsl(var(--border));
   border-radius: var(--radius-lg);
   backdrop-filter: blur(var(--backdrop-filter-blur));
-  background-color: hsl(var(--popover));
+  background-color: hsl(var(--background));
   box-shadow: var(--shadow-lg);
   gap: 1rem;
   transform: translate(-50%, -50%);

@@ -754,7 +754,7 @@ onUnmounted(() => {
 .extension-modal__overlay {
   position: absolute;
   backdrop-filter: blur(24px);
-  background-color: hsl(var(--background) / 20%);
+  background-color: hsl(var(--background) / 92%);
   inset: 0;
 }
 
