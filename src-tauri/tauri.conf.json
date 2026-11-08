@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "Sigma File Manager",
+  "productName": "MasterTeams File Manager Dev",
   "version": "../package.json",
-  "identifier": "com.sigma-file-manager.app",
+  "identifier": "dev.masterteams.filemanager",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://127.0.0.1:1420",
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Sigma File Manager",
+        "title": "MasterTeams File Manager Dev",
         "width": 1280,
         "height": 720,
         "minWidth": 500,
