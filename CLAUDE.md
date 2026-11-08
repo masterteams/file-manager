@@ -68,7 +68,7 @@ This is a cross-platform file manager (Windows + Linux, and the Tauri config als
 - Before making changes, verify the working directory and the current branch. Before committing, inspect the diff (`git diff --check`, `git diff`), stage only the relevant files, and keep one logical fix per commit.
 - Never run `npm audit fix --force`. It rewrote `package.json`/`package-lock.json` once and had to be reverted (`abbbb469` was reverted by `02d7d618`). Dependency upgrades are deliberate, per-package changes.
 - Remotes: `origin` is the fork (`masterteams/file-manager`). `upstream` is the original Sigma repo with push disabled; only fetch from it. `main` mirrors the original project's main and is not where fork work goes.
-- Pushing needs the `masterteams` GitHub account. The machine also holds other `gh` accounts, and using one of them gives a 403. `./deploy.sh push` checks this.
+- Pushing needs the `masterteams` GitHub account. The machine also holds other `gh` accounts, and using one of them gives a 403. `./deploy.sh push` always uses the `masterteams` token and never changes the active `gh` account.
 
 ## Running the fork on this machine
 
@@ -85,7 +85,7 @@ The fork is used daily while it is developed. `./deploy.sh` at the repo root man
 | `./deploy.sh status` | Mode, process, port 1420, installed build time, Node version vs the pin, branch, uncommitted count, ahead/behind `origin`, active `gh` account. |
 | `./deploy.sh build` | `tauri build --no-bundle` (release binary, no AppImage/deb), then installs it atomically. Run it after finishing a feature, then `restart permanent`. |
 | `./deploy.sh autostart enable\|disable\|status` | Manages `~/.config/autostart/masterteams-file-manager.desktop`, which runs `deploy.sh start permanent` at every login (5 s delay). It needs a prior `build`. It starts after a graphical login, so a reboot without auto-login waits at the login screen. |
-| `./deploy.sh push` | Pushes `development` to `origin/development` using `gh` credentials for that one command. Aborts if the active `gh` account isn't `masterteams`. |
+| `./deploy.sh push` | Pushes `development` to `origin/development` using the `masterteams` account's `gh` token for that one command, so the globally active `gh` account (which other projects switch) does not matter. Aborts if `masterteams` is not logged in to `gh`. |
 | `./deploy.sh pull` | Fetches and fast-forwards `development` from `origin`. It aborts on a dirty tree and runs `npm ci` if the lockfile changed. |
 | `./deploy.sh logs [-f]` | Shows the app log with the Wayland clipboard warning spam filtered out. |
 

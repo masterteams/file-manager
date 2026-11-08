@@ -270,7 +270,7 @@ cmd_status() {
 
   local user
   user="$(gh api user --jq .login 2>/dev/null || echo unknown)"
-  log "gh active account: $user (push requires $EXPECTED_GH_USER)"
+  log "gh active account: $user (push always uses the $EXPECTED_GH_USER token)"
 }
 
 cmd_logs() {
@@ -287,10 +287,11 @@ cmd_logs() {
 cmd_push() {
   require_branch
   command -v gh >/dev/null || die "gh CLI not installed"
-  local user
-  user="$(gh api user --jq .login 2>/dev/null)" || die "gh is not authenticated"
-  [[ "$user" == "$EXPECTED_GH_USER" ]] \
-    || die "gh active account is '$user', need '$EXPECTED_GH_USER'. Run: gh auth switch --hostname github.com --user $EXPECTED_GH_USER"
+  # Use the token of the expected account for this one command only. The globally active
+  # gh account (it changes when other projects switch accounts) is left untouched.
+  local token
+  token="$(gh auth token --hostname github.com --user "$EXPECTED_GH_USER" 2>/dev/null)" \
+    || die "gh has no logged-in account '$EXPECTED_GH_USER'. Run: gh auth login --hostname github.com"
 
   if [[ -n "$(git status --porcelain)" ]]; then
     log "note: uncommitted changes are NOT pushed (only commits):"
@@ -302,7 +303,7 @@ cmd_push() {
 
   # Use gh's credentials for this one command only, so other stored accounts
   # (e.g. pay24-dev) cannot be picked up and cause a 403.
-  git -c credential.helper= \
+  GH_TOKEN="$token" git -c credential.helper= \
       -c 'credential.helper=!gh auth git-credential' \
       push -u "$REMOTE" "$BRANCH"
 }
