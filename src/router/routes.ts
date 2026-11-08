@@ -4,7 +4,7 @@
 
 import HomePage from '@/modules/home/pages/home.vue';
 import {
-  BlocksIcon, FolderClosedIcon, HomeIcon, BookmarkIcon, SettingsIcon, XIcon,
+  BlocksIcon, FolderClosedIcon, HomeIcon, BookmarkIcon, NetworkIcon, SettingsIcon, XIcon,
 } from '@lucide/vue';
 import type { RouteRecordRaw } from 'vue-router';
 
@@ -39,6 +39,12 @@ export const routes: Array<RouteRecordRaw & { icon: typeof XIcon }> = [
     name: 'home',
     icon: HomeIcon,
     component: HomePage,
+  },
+  {
+    path: '/network',
+    name: 'network',
+    icon: NetworkIcon,
+    component: () => import('@/modules/network/pages/network.vue'),
   },
   {
     path: '/navigator',

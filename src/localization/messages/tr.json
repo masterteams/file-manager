@@ -22,7 +22,8 @@
     "dashboard": "Gösterge Tablosu",
     "notes": "Notlar",
     "settings": "Ayarlar",
-    "extensions": "Uzantılar"
+    "extensions": "Uzantılar",
+    "network": "Network"
   },
   "language": {
     "language": "Dil"
@@ -1300,5 +1301,10 @@
     "replaceShareDialogTitle": "Mevcut paylaşım değiştirilsin mi?",
     "replaceShareDialogDescription": "Ağ üzerinden zaten dosyalar paylaşılıyor. Mevcut paylaşım durdurulup yenisiyle değiştirilecek.",
     "replaceShareDialogConfirm": "Değiştir"
+  },
+  "networkPage": {
+    "description": "Connect to a remote server and open its files like a local folder.",
+    "protocolsHint": "Supported protocols: SSHFS (SSH), NFS and SMB / CIFS. This feature is in alpha.",
+    "connectButton": "Connect to a server"
   }
 }

@@ -22,7 +22,8 @@
     "dashboard": "Nadzorna plošča",
     "notes": "Opombe",
     "settings": "Nastavitve",
-    "extensions": "Razširitve"
+    "extensions": "Razširitve",
+    "network": "Network"
   },
   "language": {
     "language": "Jezik"
@@ -1300,5 +1301,10 @@
     "replaceShareDialogTitle": "Zamenjaj trenutno deljenje?",
     "replaceShareDialogDescription": "Datoteke se že delijo po omrežju. Trenutno deljenje bo ustavljeno in zamenjano z novim.",
     "replaceShareDialogConfirm": "Zamenjaj"
+  },
+  "networkPage": {
+    "description": "Connect to a remote server and open its files like a local folder.",
+    "protocolsHint": "Supported protocols: SSHFS (SSH), NFS and SMB / CIFS. This feature is in alpha.",
+    "connectButton": "Connect to a server"
   }
 }

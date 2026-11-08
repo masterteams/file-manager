@@ -22,7 +22,8 @@
     "dashboard": "داشبورد",
     "notes": "یادداشت",
     "settings": "تنظیمات",
-    "extensions": "برنامه های افزودنی"
+    "extensions": "برنامه های افزودنی",
+    "network": "شبکه"
   },
   "language": {
     "language": "زبان"
@@ -1300,5 +1301,10 @@
     "replaceShareDialogTitle": "اشتراک‌گذاری فعلی جایگزین شود؟",
     "replaceShareDialogDescription": "فایل‌ها از قبل از طریق شبکه به اشتراک گذاشته شده‌اند. اشتراک‌گذاری فعلی متوقف و با مورد جدید جایگزین خواهد شد.",
     "replaceShareDialogConfirm": "جایگزینی"
+  },
+  "networkPage": {
+    "description": "به یک سرور راه دور وصل شوید و فایل‌هایش را مثل یک پوشه‌ی محلی باز کنید.",
+    "protocolsHint": "پروتکل‌های پشتیبانی‌شده: SSHFS (SSH)، NFS و SMB / CIFS. این قابلیت در مرحله‌ی آلفا است.",
+    "connectButton": "اتصال به سرور"
   }
 }

@@ -22,7 +22,8 @@
     "dashboard": "Tableau de bord",
     "notes": "Notes",
     "settings": "Paramètres",
-    "extensions": "Extensions"
+    "extensions": "Extensions",
+    "network": "Network"
   },
   "language": {
     "language": "Langue"
@@ -1300,5 +1301,10 @@
     "replaceShareDialogTitle": "Remplacer le partage en cours ?",
     "replaceShareDialogDescription": "Des fichiers sont déjà partagés sur le réseau. Le partage actuel sera arrêté et remplacé par le nouveau.",
     "replaceShareDialogConfirm": "Remplacer"
+  },
+  "networkPage": {
+    "description": "Connect to a remote server and open its files like a local folder.",
+    "protocolsHint": "Supported protocols: SSHFS (SSH), NFS and SMB / CIFS. This feature is in alpha.",
+    "connectButton": "Connect to a server"
   }
 }

@@ -22,7 +22,8 @@
     "dashboard": "Bảng điều khiển",
     "notes": "Ghi chú",
     "settings": "Cài đặt",
-    "extensions": "Tiện ích mở rộng"
+    "extensions": "Tiện ích mở rộng",
+    "network": "Network"
   },
   "language": {
     "language": "Ngôn ngữ"
@@ -1300,5 +1301,10 @@
     "replaceShareDialogTitle": "Thay thế chia sẻ hiện tại?",
     "replaceShareDialogDescription": "Các tập tin đang được chia sẻ qua mạng. Chia sẻ hiện tại sẽ bị dừng và thay thế bằng chia sẻ mới.",
     "replaceShareDialogConfirm": "Thay thế"
+  },
+  "networkPage": {
+    "description": "Connect to a remote server and open its files like a local folder.",
+    "protocolsHint": "Supported protocols: SSHFS (SSH), NFS and SMB / CIFS. This feature is in alpha.",
+    "connectButton": "Connect to a server"
   }
 }

@@ -22,7 +22,8 @@
     "dashboard": "डैशबोर्ड",
     "notes": "टिप्पणियाँ",
     "settings": "सेटिंग्स",
-    "extensions": "एक्सटेंशन"
+    "extensions": "एक्सटेंशन",
+    "network": "Network"
   },
   "language": {
     "language": "भाषा"
@@ -1300,5 +1301,10 @@
     "replaceShareDialogTitle": "वर्तमान शेयर बदलें?",
     "replaceShareDialogDescription": "फ़ाइलें पहले से ही नेटवर्क पर साझा की जा रही हैं. वर्तमान शेयर बंद कर दिया जाएगा और उसके स्थान पर नया शेयर ले लिया जाएगा।",
     "replaceShareDialogConfirm": "प्रतिस्थापित करें"
+  },
+  "networkPage": {
+    "description": "Connect to a remote server and open its files like a local folder.",
+    "protocolsHint": "Supported protocols: SSHFS (SSH), NFS and SMB / CIFS. This feature is in alpha.",
+    "connectButton": "Connect to a server"
   }
 }

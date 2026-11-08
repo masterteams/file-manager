@@ -18,6 +18,7 @@
   "calculatedAgo": "Calculated {time}",
   "pages": {
     "home": "Home page",
+    "network": "Network",
     "navigator": "Navigator",
     "dashboard": "Dashboard",
     "notes": "Notes",
@@ -856,6 +857,11 @@
   "scanning": "Scanning",
   "rescan": "Rescan",
   "devicesTab": "Devices",
+  "networkPage": {
+    "description": "Connect to a remote server and open its files like a local folder.",
+    "protocolsHint": "Supported protocols: SSHFS (SSH), NFS and SMB / CIFS. This feature is in alpha.",
+    "connectButton": "Connect to a server"
+  },
   "networkTab": "Network",
   "networkHost": "Host",
   "networkPort": "Port",

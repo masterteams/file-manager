@@ -22,7 +22,8 @@
     "dashboard": "לוח מחוונים",
     "notes": "פתקים",
     "settings": "הגדרות",
-    "extensions": "תוספים"
+    "extensions": "תוספים",
+    "network": "Network"
   },
   "language": {
     "language": "שפה"
@@ -1300,5 +1301,10 @@
     "replaceShareDialogTitle": "להחליף את השיתוף הנוכחי?",
     "replaceShareDialogDescription": "קבצים כבר משותפים ברשת. השיתוף הנוכחי ייעצר ויוחלף בחדש.",
     "replaceShareDialogConfirm": "החלף"
+  },
+  "networkPage": {
+    "description": "Connect to a remote server and open its files like a local folder.",
+    "protocolsHint": "Supported protocols: SSHFS (SSH), NFS and SMB / CIFS. This feature is in alpha.",
+    "connectButton": "Connect to a server"
   }
 }

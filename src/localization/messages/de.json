@@ -22,7 +22,8 @@
     "dashboard": "Dashboard",
     "notes": "Notizen",
     "settings": "Einstellungen",
-    "extensions": "Erweiterungen"
+    "extensions": "Erweiterungen",
+    "network": "Network"
   },
   "language": {
     "language": "Sprache"
@@ -1300,5 +1301,10 @@
     "replaceShareDialogTitle": "Aktuelle Freigabe ersetzen?",
     "replaceShareDialogDescription": "Es werden bereits Dateien im Netzwerk freigegeben. Die aktuelle Freigabe wird gestoppt und durch eine neue ersetzt.",
     "replaceShareDialogConfirm": "Ersetzen"
+  },
+  "networkPage": {
+    "description": "Connect to a remote server and open its files like a local folder.",
+    "protocolsHint": "Supported protocols: SSHFS (SSH), NFS and SMB / CIFS. This feature is in alpha.",
+    "connectButton": "Connect to a server"
   }
 }

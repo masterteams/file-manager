@@ -22,7 +22,8 @@
     "dashboard": "Дашборд",
     "notes": "Заметки",
     "settings": "Настройки",
-    "extensions": "Расширения"
+    "extensions": "Расширения",
+    "network": "Network"
   },
   "language": {
     "language": "Язык"
@@ -1300,5 +1301,10 @@
     "replaceShareDialogTitle": "Заменить текущий доступ?",
     "replaceShareDialogDescription": "Файлы уже доступны по сети. Текущий доступ будет остановлен и заменён новым.",
     "replaceShareDialogConfirm": "Заменить"
+  },
+  "networkPage": {
+    "description": "Connect to a remote server and open its files like a local folder.",
+    "protocolsHint": "Supported protocols: SSHFS (SSH), NFS and SMB / CIFS. This feature is in alpha.",
+    "connectButton": "Connect to a server"
   }
 }

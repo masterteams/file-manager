@@ -22,7 +22,8 @@
     "dashboard": "Վահանակ",
     "notes": "Նշումներ",
     "settings": "Կարգավորումներ",
-    "extensions": "Ընդլայնումներ"
+    "extensions": "Ընդլայնումներ",
+    "network": "Network"
   },
   "language": {
     "language": "Լեզու"
@@ -1300,5 +1301,10 @@
     "replaceShareDialogTitle": "Փոխարինե՞լ ներկայիս կիսումը:",
     "replaceShareDialogDescription": "Ֆայլերն արդեն կիսվում են ցանցում: Ընթացիկ կիսումը կդադարեցվի և կփոխարինվի նորով:",
     "replaceShareDialogConfirm": "Փոխարինել"
+  },
+  "networkPage": {
+    "description": "Connect to a remote server and open its files like a local folder.",
+    "protocolsHint": "Supported protocols: SSHFS (SSH), NFS and SMB / CIFS. This feature is in alpha.",
+    "connectButton": "Connect to a server"
   }
 }

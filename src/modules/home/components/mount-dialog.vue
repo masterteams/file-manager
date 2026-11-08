@@ -24,6 +24,7 @@ type Protocol = 'sshfs' | 'nfs' | 'smb';
 
 const props = defineProps<{
   open: boolean;
+  initialTab?: TabId;
 }>();
 
 const emit = defineEmits<{
@@ -96,6 +97,10 @@ const canConnect = computed(() =>
 );
 
 watch(() => props.open, (isOpen) => {
+  if (isOpen && props.initialTab) {
+    activeTab.value = props.initialTab;
+  }
+
   if (isOpen && activeTab.value === 'devices') {
     scanDevices();
   }

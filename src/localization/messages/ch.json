@@ -22,7 +22,8 @@
     "dashboard": "仪表板",
     "notes": "笔记",
     "settings": "设置",
-    "extensions": "扩展功能"
+    "extensions": "扩展功能",
+    "network": "Network"
   },
   "language": {
     "language": "语言"
@@ -1300,5 +1301,10 @@
     "replaceShareDialogTitle": "替换当前共享？",
     "replaceShareDialogDescription": "文件已在网络上共享。当前共享将被停止并替换为新的共享。",
     "replaceShareDialogConfirm": "替换"
+  },
+  "networkPage": {
+    "description": "Connect to a remote server and open its files like a local folder.",
+    "protocolsHint": "Supported protocols: SSHFS (SSH), NFS and SMB / CIFS. This feature is in alpha.",
+    "connectButton": "Connect to a server"
   }
 }
