@@ -81,6 +81,39 @@ pid_alive() {
 
 current_mode() { cat "$MODE_FILE" 2>/dev/null || echo "-"; }
 
+# PIDs of the installed app started outside this script (e.g. by the app's own
+# "launch at startup" entry). Matched by executable path, not by command line.
+installed_app_pids() {
+  local pid exe
+  for pid in $(pgrep -u "$EUID" -f 'sigma-file-manager' || true); do
+    exe="$(readlink "/proc/$pid/exe" 2>/dev/null || true)"
+    exe="${exe% (deleted)}"
+    if [[ "$exe" == "$INSTALLED_BIN" ]]; then
+      echo "$pid"
+    fi
+  done
+}
+
+# Stops any installed-app process the pid file does not know about. Returns 1 if none.
+stop_external_app() {
+  local pids pid i
+  pids="$(installed_app_pids)"
+  [[ -n "$pids" ]] || return 1
+  log "stopping app started outside deploy.sh (pid $(echo "$pids" | tr '\n' ' '))"
+  for pid in $pids; do
+    kill -TERM "$pid" 2>/dev/null || true
+  done
+  for ((i = 0; i < 30; i++)); do
+    [[ -z "$(installed_app_pids)" ]] && return 0
+    sleep 0.5
+  done
+  log "did not exit in 15s, sending SIGKILL"
+  for pid in $(installed_app_pids); do
+    kill -KILL "$pid" 2>/dev/null || true
+  done
+  return 0
+}
+
 port_in_use() { ss -ltn "( sport = :$VITE_PORT )" 2>/dev/null | grep -q LISTEN; }
 
 wait_for() { # wait_for <seconds> <command...>
@@ -143,6 +176,10 @@ cmd_start() {
     log "already running in $(current_mode) mode (pid $(cat "$PID_FILE")). Use restart."
     return 0
   fi
+  if [[ "$mode" == "permanent" && -n "$(installed_app_pids)" ]]; then
+    log "already running (started outside deploy.sh, pid $(installed_app_pids | tr '\n' ' ')). Use restart to replace it."
+    return 0
+  fi
 
   case "$mode" in
     debug)
@@ -179,20 +216,25 @@ cmd_start() {
 }
 
 cmd_stop() {
-  if ! pid_alive; then
-    log "not running"
-    rm -f "$PID_FILE" "$MODE_FILE"
-    return 0
+  local pid stopped_any=0
+  if pid_alive; then
+    pid="$(cat "$PID_FILE")"
+    log "stopping $(current_mode) mode (process group $pid)"
+    kill -TERM -- "-$pid" 2>/dev/null || true
+    if ! wait_for 15 bash -c "! kill -0 $pid 2>/dev/null"; then
+      log "did not exit in 15s, sending SIGKILL"
+      kill -KILL -- "-$pid" 2>/dev/null || true
+    fi
+    stopped_any=1
   fi
-  local pid
-  pid="$(cat "$PID_FILE")"
-  log "stopping $(current_mode) mode (process group $pid)"
-  kill -TERM -- "-$pid" 2>/dev/null || true
-  if ! wait_for 15 bash -c "! kill -0 $pid 2>/dev/null"; then
-    log "did not exit in 15s, sending SIGKILL"
-    kill -KILL -- "-$pid" 2>/dev/null || true
+  if stop_external_app; then
+    stopped_any=1
   fi
   rm -f "$PID_FILE" "$MODE_FILE"
+  if [[ "$stopped_any" -eq 0 ]]; then
+    log "not running"
+    return 0
+  fi
   if port_in_use; then
     log "warning: port $VITE_PORT is still in use by a process outside this script's group"
   else
@@ -202,7 +244,9 @@ cmd_stop() {
 
 cmd_restart() {
   local mode="${1:-$(current_mode)}"
-  [[ "$mode" == "-" ]] && mode="debug"
+  if [[ "$mode" == "-" ]]; then
+    if [[ -n "$(installed_app_pids)" ]]; then mode="permanent"; else mode="debug"; fi
+  fi
   cmd_stop
   cmd_start "$mode"
 }
@@ -242,6 +286,8 @@ cmd_status() {
   cmd_autostart status
   if pid_alive; then
     log "app: RUNNING in $(current_mode) mode (pid $(cat "$PID_FILE"))"
+  elif [[ -n "$(installed_app_pids)" ]]; then
+    log "app: RUNNING (permanent build started outside deploy.sh, pid $(installed_app_pids | tr '\n' ' '))"
   else
     log "app: STOPPED"
   fi
